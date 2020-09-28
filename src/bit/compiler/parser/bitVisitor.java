@@ -46,4 +46,16 @@ public interface bitVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitReg(bitParser.RegContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link bitParser#i86regs8}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitI86regs8(bitParser.I86regs8Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link bitParser#i86regs16}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitI86regs16(bitParser.I86regs16Context ctx);
 }

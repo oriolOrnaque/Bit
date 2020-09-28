@@ -3,8 +3,10 @@ package bit.compiler.ast;
 import bit.compiler.ast.nodes.*;
 import bit.compiler.ast.nodes.expression.ExpressionNode;
 import bit.compiler.ast.nodes.expression.ExpressionNodeBinop;
+import bit.compiler.ast.nodes.expression.ExpressionNodeNum;
 import bit.compiler.parser.bitBaseVisitor;
 import bit.compiler.parser.bitParser;
+import bit.compiler.parser.bitLexer;
 
 public class ASTBuilderVisitor extends bitBaseVisitor {
 
@@ -44,6 +46,14 @@ public class ASTBuilderVisitor extends bitBaseVisitor {
         if(ctx.binop() != null)
         {
             return new ExpressionNodeBinop(ctx.binop(), visitExpression(ctx.expression(0)), visitExpression(ctx.expression(1)));
+        }
+        else if(ctx.NUM() != null)
+        {
+            return new ExpressionNodeNum(ctx.NUM().getText());
+        }
+        else if(ctx.start.getType() == bitLexer.PARENTHESIS_OPEN)
+        {
+            return visitExpression(ctx.expression(0));
         }
 
         return new ExpressionNode();
