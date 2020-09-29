@@ -29,19 +29,34 @@ public class RealModeGen {
     }
 
     private void emit(AST ast) throws IOException {
+        // BIOS BOOTLOADING
         this.out.write(0xb8);
         this.out.write(0xc0);
         this.out.write(0x07);
-        this.out.write(0xb8);
-        this.out.write(0xd8);
 
+        this.out.write(0x8e);
+        this.out.write(0xd8);
+        // PADDING
+        this.out.write(0x90);
+
+        //TEST
+        this.out.write(0xb8);
+        this.out.write(0x34);
+        this.out.write(0x12);
+        // INFINITE JUMP
+        this.out.write(0xe8);
+        this.out.write(0xa);
+
+        // HLT
         this.out.write(0xf4);
 
-        for(int i = 0; i < 510 - 6; ++i)
+        // PADDING
+        for(int i = 0; i < 510 - 12; ++i)
         {
-            this.out.write(0x0);
+            this.out.write(0x90);
         }
 
+        // BIOS BOOT MAGIC NUMBER
         this.out.write(0x55);
         this.out.write(0xaa);
     }
