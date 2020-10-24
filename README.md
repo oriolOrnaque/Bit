@@ -8,3 +8,5 @@ The language aims to easy the burden of writing OS-less programs in real mode fo
 ```
 qemu-system-x86_64 -drive format=raw,file=output.bin
 ```
+
+![main screen](https://raw.githubusercontent.com/oriolOrnaque/Bit/master/imgs/bit_boot.png)
