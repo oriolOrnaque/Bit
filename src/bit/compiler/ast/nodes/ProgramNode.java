@@ -1,17 +1,20 @@
 package bit.compiler.ast.nodes;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class ProgramNode {
 
-    private StatementNode stmt;
+    private List<StatementNode> stmts;
 
     public ProgramNode()
     {
-
+        this.stmts = new LinkedList<>();
     }
 
-    public void setStmt(StatementNode stmt)
+    public void addStmt(StatementNode stmt)
     {
-        this.stmt = stmt;
+        this.stmts.add(stmt);
     }
 
 }

@@ -17,33 +17,37 @@ public class bitParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		PLUS=1, MINUS=2, MULTIPLY=3, DIVIDE=4, MODULO=5, ASSIGN=6, PARENTHESIS_OPEN=7, 
-		PARENTHESIS_CLOSE=8, SEMICOLON=9, AH=10, AL=11, BH=12, BL=13, CH=14, CL=15, 
-		DH=16, DL=17, AX=18, BX=19, CX=20, DX=21, NUM=22, ID=23, WS=24;
+		PLUS=1, MINUS=2, MULTIPLY=3, DIVIDE=4, MODULO=5, INC=6, DEC=7, NOT=8, 
+		ASSIGN=9, PARENTHESIS_OPEN=10, PARENTHESIS_CLOSE=11, SEMICOLON=12, AH=13, 
+		AL=14, BH=15, BL=16, CH=17, CL=18, DH=19, DL=20, AX=21, BX=22, CX=23, 
+		DX=24, U8=25, U16=26, I8=27, I16=28, NUM=29, ID=30, WS=31;
 	public static final int
-		RULE_startRule = 0, RULE_program = 1, RULE_statement = 2, RULE_expression = 3, 
-		RULE_binop = 4, RULE_reg = 5, RULE_i86regs8 = 6, RULE_i86regs16 = 7;
+		RULE_startRule = 0, RULE_program = 1, RULE_statement = 2, RULE_id_or_reg = 3, 
+		RULE_type = 4, RULE_expression = 5, RULE_binop = 6, RULE_unaryop_post = 7, 
+		RULE_unaryop_pre = 8, RULE_reg = 9, RULE_regs8 = 10, RULE_regs16 = 11;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"startRule", "program", "statement", "expression", "binop", "reg", "i86regs8", 
-			"i86regs16"
+			"startRule", "program", "statement", "id_or_reg", "type", "expression", 
+			"binop", "unaryop_post", "unaryop_pre", "reg", "regs8", "regs16"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'+'", "'-'", "'*'", "'/'", "'%'", "'='", "'('", "')'", "';'", 
-			"'ah'", "'al'", "'bh'", "'bl'", "'ch'", "'cl'", "'dh'", "'dl'", "'ax'", 
-			"'bx'", "'cx'", "'dx'"
+			null, "'+'", "'-'", "'*'", "'/'", "'%'", "'++'", "'--'", "'!'", "'='", 
+			"'('", "')'", "';'", "'ah'", "'al'", "'bh'", "'bl'", "'ch'", "'cl'", 
+			"'dh'", "'dl'", "'ax'", "'bx'", "'cx'", "'dx'", "'u8'", "'u16'", "'i8'", 
+			"'i16'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "MODULO", "ASSIGN", "PARENTHESIS_OPEN", 
-			"PARENTHESIS_CLOSE", "SEMICOLON", "AH", "AL", "BH", "BL", "CH", "CL", 
-			"DH", "DL", "AX", "BX", "CX", "DX", "NUM", "ID", "WS"
+			null, "PLUS", "MINUS", "MULTIPLY", "DIVIDE", "MODULO", "INC", "DEC", 
+			"NOT", "ASSIGN", "PARENTHESIS_OPEN", "PARENTHESIS_CLOSE", "SEMICOLON", 
+			"AH", "AL", "BH", "BL", "CH", "CL", "DH", "DL", "AX", "BX", "CX", "DX", 
+			"U8", "U16", "I8", "I16", "NUM", "ID", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -119,9 +123,9 @@ public class bitParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(16);
+			setState(24);
 			program();
-			setState(17);
+			setState(25);
 			match(EOF);
 			}
 		}
@@ -137,8 +141,11 @@ public class bitParser extends Parser {
 	}
 
 	public static class ProgramContext extends ParserRuleContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
 		}
 		public ProgramContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -154,11 +161,24 @@ public class bitParser extends Parser {
 	public final ProgramContext program() throws RecognitionException {
 		ProgramContext _localctx = new ProgramContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_program);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(19);
-			statement();
+			setState(28); 
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			do {
+				{
+				{
+				setState(27);
+				statement();
+				}
+				}
+				setState(30); 
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << AH) | (1L << AL) | (1L << BH) | (1L << BL) | (1L << CH) | (1L << CL) | (1L << DH) | (1L << DL) | (1L << AX) | (1L << BX) | (1L << CX) | (1L << DX) | (1L << U8) | (1L << U16) | (1L << I8) | (1L << I16) | (1L << ID))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -173,14 +193,17 @@ public class bitParser extends Parser {
 	}
 
 	public static class StatementContext extends ParserRuleContext {
-		public RegContext reg() {
-			return getRuleContext(RegContext.class,0);
+		public Id_or_regContext id_or_reg() {
+			return getRuleContext(Id_or_regContext.class,0);
 		}
 		public TerminalNode ASSIGN() { return getToken(bitParser.ASSIGN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode SEMICOLON() { return getToken(bitParser.SEMICOLON, 0); }
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
 		public StatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -195,16 +218,27 @@ public class bitParser extends Parser {
 	public final StatementContext statement() throws RecognitionException {
 		StatementContext _localctx = new StatementContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_statement);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(21);
-			reg();
-			setState(22);
+			setState(33);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << U8) | (1L << U16) | (1L << I8) | (1L << I16))) != 0)) {
+				{
+				setState(32);
+				type();
+				}
+			}
+
+			setState(35);
+			id_or_reg();
+			setState(36);
 			match(ASSIGN);
-			setState(23);
+			setState(37);
 			expression(0);
-			setState(24);
+			setState(38);
 			match(SEMICOLON);
 			}
 		}
@@ -219,12 +253,120 @@ public class bitParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ExpressionContext extends ParserRuleContext {
+	public static class Id_or_regContext extends ParserRuleContext {
+		public TerminalNode ID() { return getToken(bitParser.ID, 0); }
 		public RegContext reg() {
 			return getRuleContext(RegContext.class,0);
 		}
+		public Id_or_regContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_id_or_reg; }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitId_or_reg(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final Id_or_regContext id_or_reg() throws RecognitionException {
+		Id_or_regContext _localctx = new Id_or_regContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_id_or_reg);
+		try {
+			setState(42);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case ID:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(40);
+				match(ID);
+				}
+				break;
+			case AH:
+			case AL:
+			case BH:
+			case BL:
+			case CH:
+			case CL:
+			case DH:
+			case DL:
+			case AX:
+			case BX:
+			case CX:
+			case DX:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(41);
+				reg();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class TypeContext extends ParserRuleContext {
+		public TerminalNode U8() { return getToken(bitParser.U8, 0); }
+		public TerminalNode U16() { return getToken(bitParser.U16, 0); }
+		public TerminalNode I8() { return getToken(bitParser.I8, 0); }
+		public TerminalNode I16() { return getToken(bitParser.I16, 0); }
+		public TypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_type; }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final TypeContext type() throws RecognitionException {
+		TypeContext _localctx = new TypeContext(_ctx, getState());
+		enterRule(_localctx, 8, RULE_type);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(44);
+			_la = _input.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << U8) | (1L << U16) | (1L << I8) | (1L << I16))) != 0)) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ExpressionContext extends ParserRuleContext {
+		public Id_or_regContext id_or_reg() {
+			return getRuleContext(Id_or_regContext.class,0);
+		}
 		public TerminalNode NUM() { return getToken(bitParser.NUM, 0); }
-		public TerminalNode ID() { return getToken(bitParser.ID, 0); }
 		public TerminalNode PARENTHESIS_OPEN() { return getToken(bitParser.PARENTHESIS_OPEN, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -233,8 +375,14 @@ public class bitParser extends Parser {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public TerminalNode PARENTHESIS_CLOSE() { return getToken(bitParser.PARENTHESIS_CLOSE, 0); }
+		public Unaryop_preContext unaryop_pre() {
+			return getRuleContext(Unaryop_preContext.class,0);
+		}
 		public BinopContext binop() {
 			return getRuleContext(BinopContext.class,0);
+		}
+		public Unaryop_postContext unaryop_post() {
+			return getRuleContext(Unaryop_postContext.class,0);
 		}
 		public ExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -256,13 +404,13 @@ public class bitParser extends Parser {
 		int _parentState = getState();
 		ExpressionContext _localctx = new ExpressionContext(_ctx, _parentState);
 		ExpressionContext _prevctx = _localctx;
-		int _startState = 6;
-		enterRecursionRule(_localctx, 6, RULE_expression, _p);
+		int _startState = 10;
+		enterRecursionRule(_localctx, 10, RULE_expression, _p);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(34);
+			setState(56);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AH:
@@ -277,60 +425,80 @@ public class bitParser extends Parser {
 			case BX:
 			case CX:
 			case DX:
+			case ID:
 				{
-				setState(27);
-				reg();
+				setState(47);
+				id_or_reg();
 				}
 				break;
 			case NUM:
 				{
-				setState(28);
+				setState(48);
 				match(NUM);
-				}
-				break;
-			case ID:
-				{
-				setState(29);
-				match(ID);
 				}
 				break;
 			case PARENTHESIS_OPEN:
 				{
-				setState(30);
+				setState(49);
 				match(PARENTHESIS_OPEN);
-				setState(31);
+				setState(50);
 				expression(0);
-				setState(32);
+				setState(51);
 				match(PARENTHESIS_CLOSE);
+				}
+				break;
+			case INC:
+			case DEC:
+				{
+				setState(53);
+				unaryop_pre();
+				setState(54);
+				expression(2);
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(42);
+			setState(66);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					{
-					_localctx = new ExpressionContext(_parentctx, _parentState);
-					pushNewRecursionContext(_localctx, _startState, RULE_expression);
-					setState(36);
-					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-					setState(37);
-					binop();
-					setState(38);
-					expression(3);
+					setState(64);
+					_errHandler.sync(this);
+					switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+					case 1:
+						{
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						pushNewRecursionContext(_localctx, _startState, RULE_expression);
+						setState(58);
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+						setState(59);
+						binop();
+						setState(60);
+						expression(4);
+						}
+						break;
+					case 2:
+						{
+						_localctx = new ExpressionContext(_parentctx, _parentState);
+						pushNewRecursionContext(_localctx, _startState, RULE_expression);
+						setState(62);
+						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						setState(63);
+						unaryop_post();
+						}
+						break;
 					}
 					} 
 				}
-				setState(44);
+				setState(68);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			}
 			}
 		}
@@ -364,12 +532,12 @@ public class bitParser extends Parser {
 
 	public final BinopContext binop() throws RecognitionException {
 		BinopContext _localctx = new BinopContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_binop);
+		enterRule(_localctx, 12, RULE_binop);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(45);
+			setState(69);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << MINUS) | (1L << MULTIPLY) | (1L << DIVIDE) | (1L << MODULO))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -392,53 +560,42 @@ public class bitParser extends Parser {
 		return _localctx;
 	}
 
-	public static class RegContext extends ParserRuleContext {
-		public I86regs8Context i86regs8() {
-			return getRuleContext(I86regs8Context.class,0);
+	public static class Unaryop_postContext extends ParserRuleContext {
+		public Unaryop_preContext unaryop_pre() {
+			return getRuleContext(Unaryop_preContext.class,0);
 		}
-		public I86regs16Context i86regs16() {
-			return getRuleContext(I86regs16Context.class,0);
-		}
-		public RegContext(ParserRuleContext parent, int invokingState) {
+		public TerminalNode NOT() { return getToken(bitParser.NOT, 0); }
+		public Unaryop_postContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_reg; }
+		@Override public int getRuleIndex() { return RULE_unaryop_post; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitReg(this);
+			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitUnaryop_post(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final RegContext reg() throws RecognitionException {
-		RegContext _localctx = new RegContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_reg);
+	public final Unaryop_postContext unaryop_post() throws RecognitionException {
+		Unaryop_postContext _localctx = new Unaryop_postContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_unaryop_post);
 		try {
-			setState(49);
+			setState(73);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case AH:
-			case AL:
-			case BH:
-			case BL:
-			case CH:
-			case CL:
-			case DH:
-			case DL:
+			case INC:
+			case DEC:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(47);
-				i86regs8();
+				setState(71);
+				unaryop_pre();
 				}
 				break;
-			case AX:
-			case BX:
-			case CX:
-			case DX:
+			case NOT:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(48);
-				i86regs16();
+				setState(72);
+				match(NOT);
 				}
 				break;
 			default:
@@ -456,7 +613,115 @@ public class bitParser extends Parser {
 		return _localctx;
 	}
 
-	public static class I86regs8Context extends ParserRuleContext {
+	public static class Unaryop_preContext extends ParserRuleContext {
+		public TerminalNode INC() { return getToken(bitParser.INC, 0); }
+		public TerminalNode DEC() { return getToken(bitParser.DEC, 0); }
+		public Unaryop_preContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_unaryop_pre; }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitUnaryop_pre(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final Unaryop_preContext unaryop_pre() throws RecognitionException {
+		Unaryop_preContext _localctx = new Unaryop_preContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_unaryop_pre);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(75);
+			_la = _input.LA(1);
+			if ( !(_la==INC || _la==DEC) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class RegContext extends ParserRuleContext {
+		public Regs8Context regs8() {
+			return getRuleContext(Regs8Context.class,0);
+		}
+		public Regs16Context regs16() {
+			return getRuleContext(Regs16Context.class,0);
+		}
+		public RegContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_reg; }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitReg(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final RegContext reg() throws RecognitionException {
+		RegContext _localctx = new RegContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_reg);
+		try {
+			setState(79);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case AH:
+			case AL:
+			case BH:
+			case BL:
+			case CH:
+			case CL:
+			case DH:
+			case DL:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(77);
+				regs8();
+				}
+				break;
+			case AX:
+			case BX:
+			case CX:
+			case DX:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(78);
+				regs16();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class Regs8Context extends ParserRuleContext {
 		public TerminalNode AH() { return getToken(bitParser.AH, 0); }
 		public TerminalNode AL() { return getToken(bitParser.AL, 0); }
 		public TerminalNode BH() { return getToken(bitParser.BH, 0); }
@@ -465,25 +730,25 @@ public class bitParser extends Parser {
 		public TerminalNode CL() { return getToken(bitParser.CL, 0); }
 		public TerminalNode DH() { return getToken(bitParser.DH, 0); }
 		public TerminalNode DL() { return getToken(bitParser.DL, 0); }
-		public I86regs8Context(ParserRuleContext parent, int invokingState) {
+		public Regs8Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_i86regs8; }
+		@Override public int getRuleIndex() { return RULE_regs8; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitI86regs8(this);
+			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitRegs8(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final I86regs8Context i86regs8() throws RecognitionException {
-		I86regs8Context _localctx = new I86regs8Context(_ctx, getState());
-		enterRule(_localctx, 12, RULE_i86regs8);
+	public final Regs8Context regs8() throws RecognitionException {
+		Regs8Context _localctx = new Regs8Context(_ctx, getState());
+		enterRule(_localctx, 20, RULE_regs8);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(51);
+			setState(81);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << AH) | (1L << AL) | (1L << BH) | (1L << BL) | (1L << CH) | (1L << CL) | (1L << DH) | (1L << DL))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -506,30 +771,30 @@ public class bitParser extends Parser {
 		return _localctx;
 	}
 
-	public static class I86regs16Context extends ParserRuleContext {
+	public static class Regs16Context extends ParserRuleContext {
 		public TerminalNode AX() { return getToken(bitParser.AX, 0); }
 		public TerminalNode BX() { return getToken(bitParser.BX, 0); }
 		public TerminalNode CX() { return getToken(bitParser.CX, 0); }
 		public TerminalNode DX() { return getToken(bitParser.DX, 0); }
-		public I86regs16Context(ParserRuleContext parent, int invokingState) {
+		public Regs16Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_i86regs16; }
+		@Override public int getRuleIndex() { return RULE_regs16; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitI86regs16(this);
+			if ( visitor instanceof bitVisitor ) return ((bitVisitor<? extends T>)visitor).visitRegs16(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final I86regs16Context i86regs16() throws RecognitionException {
-		I86regs16Context _localctx = new I86regs16Context(_ctx, getState());
-		enterRule(_localctx, 14, RULE_i86regs16);
+	public final Regs16Context regs16() throws RecognitionException {
+		Regs16Context _localctx = new Regs16Context(_ctx, getState());
+		enterRule(_localctx, 22, RULE_regs16);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(53);
+			setState(83);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << AX) | (1L << BX) | (1L << CX) | (1L << DX))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -554,7 +819,7 @@ public class bitParser extends Parser {
 
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 3:
+		case 5:
 			return expression_sempred((ExpressionContext)_localctx, predIndex);
 		}
 		return true;
@@ -562,27 +827,35 @@ public class bitParser extends Parser {
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 2);
+			return precpred(_ctx, 3);
+		case 1:
+			return precpred(_ctx, 1);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\32:\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\3\2\3\2\3\3\3\3"+
-		"\3\4\3\4\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5%\n\5\3\5\3\5"+
-		"\3\5\3\5\7\5+\n\5\f\5\16\5.\13\5\3\6\3\6\3\7\3\7\5\7\64\n\7\3\b\3\b\3"+
-		"\t\3\t\3\t\2\3\b\n\2\4\6\b\n\f\16\20\2\5\3\2\3\7\3\2\f\23\3\2\24\27\2"+
-		"\66\2\22\3\2\2\2\4\25\3\2\2\2\6\27\3\2\2\2\b$\3\2\2\2\n/\3\2\2\2\f\63"+
-		"\3\2\2\2\16\65\3\2\2\2\20\67\3\2\2\2\22\23\5\4\3\2\23\24\7\2\2\3\24\3"+
-		"\3\2\2\2\25\26\5\6\4\2\26\5\3\2\2\2\27\30\5\f\7\2\30\31\7\b\2\2\31\32"+
-		"\5\b\5\2\32\33\7\13\2\2\33\7\3\2\2\2\34\35\b\5\1\2\35%\5\f\7\2\36%\7\30"+
-		"\2\2\37%\7\31\2\2 !\7\t\2\2!\"\5\b\5\2\"#\7\n\2\2#%\3\2\2\2$\34\3\2\2"+
-		"\2$\36\3\2\2\2$\37\3\2\2\2$ \3\2\2\2%,\3\2\2\2&\'\f\4\2\2\'(\5\n\6\2("+
-		")\5\b\5\5)+\3\2\2\2*&\3\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3\2\2\2-\t\3\2\2\2"+
-		".,\3\2\2\2/\60\t\2\2\2\60\13\3\2\2\2\61\64\5\16\b\2\62\64\5\20\t\2\63"+
-		"\61\3\2\2\2\63\62\3\2\2\2\64\r\3\2\2\2\65\66\t\3\2\2\66\17\3\2\2\2\67"+
-		"8\t\4\2\28\21\3\2\2\2\5$,\63";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3!X\4\2\t\2\4\3\t\3"+
+		"\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f"+
+		"\t\f\4\r\t\r\3\2\3\2\3\2\3\3\6\3\37\n\3\r\3\16\3 \3\4\5\4$\n\4\3\4\3\4"+
+		"\3\4\3\4\3\4\3\5\3\5\5\5-\n\5\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7"+
+		"\3\7\3\7\5\7;\n\7\3\7\3\7\3\7\3\7\3\7\3\7\7\7C\n\7\f\7\16\7F\13\7\3\b"+
+		"\3\b\3\t\3\t\5\tL\n\t\3\n\3\n\3\13\3\13\5\13R\n\13\3\f\3\f\3\r\3\r\3\r"+
+		"\2\3\f\16\2\4\6\b\n\f\16\20\22\24\26\30\2\7\3\2\33\36\3\2\3\7\3\2\b\t"+
+		"\3\2\17\26\3\2\27\32\2U\2\32\3\2\2\2\4\36\3\2\2\2\6#\3\2\2\2\b,\3\2\2"+
+		"\2\n.\3\2\2\2\f:\3\2\2\2\16G\3\2\2\2\20K\3\2\2\2\22M\3\2\2\2\24Q\3\2\2"+
+		"\2\26S\3\2\2\2\30U\3\2\2\2\32\33\5\4\3\2\33\34\7\2\2\3\34\3\3\2\2\2\35"+
+		"\37\5\6\4\2\36\35\3\2\2\2\37 \3\2\2\2 \36\3\2\2\2 !\3\2\2\2!\5\3\2\2\2"+
+		"\"$\5\n\6\2#\"\3\2\2\2#$\3\2\2\2$%\3\2\2\2%&\5\b\5\2&\'\7\13\2\2\'(\5"+
+		"\f\7\2()\7\16\2\2)\7\3\2\2\2*-\7 \2\2+-\5\24\13\2,*\3\2\2\2,+\3\2\2\2"+
+		"-\t\3\2\2\2./\t\2\2\2/\13\3\2\2\2\60\61\b\7\1\2\61;\5\b\5\2\62;\7\37\2"+
+		"\2\63\64\7\f\2\2\64\65\5\f\7\2\65\66\7\r\2\2\66;\3\2\2\2\678\5\22\n\2"+
+		"89\5\f\7\49;\3\2\2\2:\60\3\2\2\2:\62\3\2\2\2:\63\3\2\2\2:\67\3\2\2\2;"+
+		"D\3\2\2\2<=\f\5\2\2=>\5\16\b\2>?\5\f\7\6?C\3\2\2\2@A\f\3\2\2AC\5\20\t"+
+		"\2B<\3\2\2\2B@\3\2\2\2CF\3\2\2\2DB\3\2\2\2DE\3\2\2\2E\r\3\2\2\2FD\3\2"+
+		"\2\2GH\t\3\2\2H\17\3\2\2\2IL\5\22\n\2JL\7\n\2\2KI\3\2\2\2KJ\3\2\2\2L\21"+
+		"\3\2\2\2MN\t\4\2\2N\23\3\2\2\2OR\5\26\f\2PR\5\30\r\2QO\3\2\2\2QP\3\2\2"+
+		"\2R\25\3\2\2\2ST\t\5\2\2T\27\3\2\2\2UV\t\6\2\2V\31\3\2\2\2\n #,:BDKQ";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

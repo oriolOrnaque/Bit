@@ -21,7 +21,10 @@ public class ASTBuilderVisitor extends bitBaseVisitor {
     {
         ProgramNode prog = new ProgramNode();
 
-        prog.setStmt(visitStatement(ctx.statement()));
+        for(bitParser.StatementContext stmtCtx: ctx.statement())
+        {
+            prog.addStmt(visitStatement(stmtCtx));
+        }
 
         return prog;
     }
@@ -30,7 +33,12 @@ public class ASTBuilderVisitor extends bitBaseVisitor {
     {
         StatementNode stmt =  new StatementNode();
 
-        stmt.setReg(visitReg(ctx.reg()));
+        if(ctx.id_or_reg().ID() != null){}
+        else if(ctx.id_or_reg().reg() != null)
+        {
+            stmt.setReg(visitReg(ctx.id_or_reg().reg()));
+        }
+
         stmt.setExpr(visitExpression(ctx.expression()));
 
         return stmt;

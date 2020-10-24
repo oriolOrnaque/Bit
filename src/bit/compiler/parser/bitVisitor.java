@@ -29,6 +29,18 @@ public interface bitVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatement(bitParser.StatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link bitParser#id_or_reg}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitId_or_reg(bitParser.Id_or_regContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link bitParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitType(bitParser.TypeContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link bitParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -41,21 +53,33 @@ public interface bitVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBinop(bitParser.BinopContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link bitParser#unaryop_post}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryop_post(bitParser.Unaryop_postContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link bitParser#unaryop_pre}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryop_pre(bitParser.Unaryop_preContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link bitParser#reg}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitReg(bitParser.RegContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link bitParser#i86regs8}.
+	 * Visit a parse tree produced by {@link bitParser#regs8}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitI86regs8(bitParser.I86regs8Context ctx);
+	T visitRegs8(bitParser.Regs8Context ctx);
 	/**
-	 * Visit a parse tree produced by {@link bitParser#i86regs16}.
+	 * Visit a parse tree produced by {@link bitParser#regs16}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitI86regs16(bitParser.I86regs16Context ctx);
+	T visitRegs16(bitParser.Regs16Context ctx);
 }

@@ -3,19 +3,32 @@ grammar bit;
 startRule: program EOF;
 
 program
-    : statement
+    : statement+
     ;
 
 statement
-    : reg ASSIGN expression SEMICOLON
+    : type? id_or_reg ASSIGN expression SEMICOLON
+    ;
+
+id_or_reg
+    : ID
+    | reg
+    ;
+
+type
+    : U8
+    | U16
+    | I8
+    | I16
     ;
 
 expression
-    : reg
+    : id_or_reg
     | NUM
-    | ID
-    | expression binop expression
     | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
+    | expression binop expression
+    | unaryop_pre expression
+    | expression unaryop_post
     ;
 
 binop
@@ -26,12 +39,22 @@ binop
     | MODULO
     ;
 
-reg
-    : i86regs8
-    | i86regs16
+unaryop_post
+    : unaryop_pre
+    | NOT
     ;
 
-i86regs8
+unaryop_pre
+    : INC
+    | DEC
+    ;
+
+reg
+    : regs8
+    | regs16
+    ;
+
+regs8
     : AH
     | AL
     | BH
@@ -42,7 +65,7 @@ i86regs8
     | DL
     ;
 
-i86regs16
+regs16
     : AX
     | BX
     | CX
@@ -54,6 +77,9 @@ MINUS: '-';
 MULTIPLY: '*';
 DIVIDE: '/';
 MODULO: '%';
+INC: '++';
+DEC: '--';
+NOT: '!';
 ASSIGN: '=';
 PARENTHESIS_OPEN: '(';
 PARENTHESIS_CLOSE: ')';
@@ -71,6 +97,11 @@ AX: 'ax';
 BX: 'bx';
 CX: 'cx';
 DX: 'dx';
+
+U8: 'u8';
+U16: 'u16';
+I8: 'i8';
+I16: 'i16';
 
 NUM: [0-9]+;
 ID: [a-zA-Z]+;
