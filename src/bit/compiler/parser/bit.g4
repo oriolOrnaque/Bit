@@ -3,28 +3,69 @@ grammar bit;
 startRule: program EOF;
 
 program
-    : statement+
+    : program_blocks+
+    ;
+
+program_blocks
+    : statement
+    | function_decl
+    | struct
+    | decl
+    ;
+
+function_decl
+    : multilevel_id PARENTHESIS_OPEN function_parameters PARENTHESIS_CLOSE CURLY_BRACES_OPEN statement* CURLY_BRACES_CLOSE
+    ;
+
+function_call
+    : multilevel_id PARENTHESIS_OPEN function_arguments PARENTHESIS_CLOSE
+    ;
+
+function_parameters
+    : (type ID)?
+    | (type ID ',')* type ID
+    ;
+
+function_arguments
+    : ID?
+    | (ID ',')* ID
+    ;
+
+struct
+    : STRUCT ID CURLY_BRACES_OPEN  decl+ CURLY_BRACES_CLOSE SEMICOLON
+    ;
+
+decl
+    : type ID SEMICOLON
     ;
 
 statement
     : type? id_or_reg ASSIGN expression SEMICOLON
+    | expression SEMICOLON
+    ;
+
+multilevel_id
+    : ID ('.' ID)*
     ;
 
 id_or_reg
-    : ID
+    : multilevel_id
     | reg
     ;
 
 type
-    : U8
-    | U16
-    | I8
-    | I16
+    : BYTE
+    | WORD
+    | DWORD
+    | QWORD
+    | OWORD
+    | STRUCT ID
     ;
 
 expression
     : id_or_reg
     | NUM
+    | function_call
     | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
     | expression binop expression
     | unaryop_pre expression
@@ -83,6 +124,10 @@ NOT: '!';
 ASSIGN: '=';
 PARENTHESIS_OPEN: '(';
 PARENTHESIS_CLOSE: ')';
+CURLY_BRACES_OPEN: '{';
+CURLY_BRACES_CLOSE: '}';
+BRACKET_OPEN: '[';
+BRACKET_CLOSE: ']';
 SEMICOLON: ';';
 
 AH: 'ah';
@@ -98,12 +143,15 @@ BX: 'bx';
 CX: 'cx';
 DX: 'dx';
 
-U8: 'u8';
-U16: 'u16';
-I8: 'i8';
-I16: 'i16';
+BYTE: 'byte';
+WORD: 'word';
+DWORD: 'dword';
+QWORD: 'qword';
+OWORD: 'oword';
+
+STRUCT: 'struct';
 
 NUM: [0-9]+;
-ID: [a-zA-Z]+;
+ID: [_a-zA-Z][_a-zA-Z0-9]*;
 
 WS: [ \t\n\r]+ -> skip;

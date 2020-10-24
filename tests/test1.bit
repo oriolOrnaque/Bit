@@ -1,2 +1,25 @@
-ax = 3 + (3 * 5);
-bx = 3 + 3 * 4;
+struct diskInfo
+{
+    byte size_of_dap;
+    byte unused;
+    word n_sectors;
+    word offset;
+    word segment;
+    dword lba;
+    dword lba48;
+};
+
+struct diskInfo info;
+
+main()
+{
+    info.size_of_dap = 16;
+    info.unused = 0;
+    info.n_sectors = 2;
+    info.offset = 0;
+    info.segment = 50;
+    info.lba = 1;
+    info.lba48 = 0;
+    
+    bios.load_from_disk(info);
+}
